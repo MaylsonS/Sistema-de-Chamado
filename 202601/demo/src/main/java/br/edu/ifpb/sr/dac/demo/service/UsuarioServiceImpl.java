@@ -25,11 +25,36 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void save(PostUsuarioDTO dto) {
         Usuario usuario = this.usuarioMapper.toUsuarioEntity(dto);
+        usuario.setTipo("USUARIO");
         this.usuarioDao.save(usuario);
+    }
+
+
+    @Transactional
+    public void saveAdmin(PostUsuarioDTO dto) {
+        Usuario usuario = this.usuarioMapper.toUsuarioEntity(dto);
+        usuario.setTipo("ADMIN");
+
+
+        usuarioDao.save(usuario);
     }
 
     @Override
     public List<GetUsuariosRespDTO> listAll() {
-        return this.usuarioDao.findAll().stream().map(usuario -> new GetUsuariosRespDTO(usuario.getId(), usuario.getNome(), usuario.getUsername())).toList();
+        return this.usuarioDao.findAll().stream().map(usuario -> new GetUsuariosRespDTO(usuario.getId(), usuario.getNome(), usuario.getUsername(), usuario.getTipo())).toList();
     }
+
+    @Override
+    public List<GetUsuariosRespDTO> listAllAdmin() {
+        return this.usuarioDao
+                .findAllByTipo("ADMIN")
+                .stream()
+                .map(adm -> new GetUsuariosRespDTO(
+                        adm.getId(),
+                        adm.getNome(),
+                        adm.getUsername(),
+                        adm.getTipo()
+                )).toList();
+    }
+
 }

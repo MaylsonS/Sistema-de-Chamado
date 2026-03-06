@@ -8,5 +8,8 @@ import java.util.List;
 
 public interface UsuarioService {
     void save(PostUsuarioDTO dto);
+    void saveAdmin(PostUsuarioDTO dto);
     List<GetUsuariosRespDTO> listAll();
+    List<GetUsuariosRespDTO> listAllAdmin();
+
 }
