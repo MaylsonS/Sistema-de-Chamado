@@ -6,27 +6,29 @@ import br.edu.ifpb.sr.dac.demo.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/usuarios")
-public class UsuarioController {
+@RequestMapping("/v1/adm")
+public class AdmController {
 
     private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public AdmController (UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> postUsuario(@RequestBody PostUsuarioDTO dto) {
-        this.usuarioService.save(dto);
-        return ResponseEntity.created(URI.create("/1")).body(Boolean.TRUE);
+    public ResponseEntity<Boolean> postAdm(@RequestBody PostUsuarioDTO dto) {
+
+        this.usuarioService.saveAdmin(dto);
+        return ResponseEntity.ok(Boolean.TRUE);
     }
 
+
     @GetMapping
-    public ResponseEntity<List<GetUsuariosRespDTO>> getAllUsuarios() {
-        return ResponseEntity.ok(this.usuarioService.listAll());
+    public ResponseEntity<List<GetUsuariosRespDTO>> getAdms() {
+        return ResponseEntity.ok(this.usuarioService.listAllAdmin());
     }
+
 }

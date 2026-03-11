@@ -1,10 +1,11 @@
 package br.edu.ifpb.sr.dac.demo.service;
 
 import br.edu.ifpb.sr.dac.demo.dao.UsuarioDao;
-import br.edu.ifpb.sr.dac.demo.dto.Getusuario;
+import br.edu.ifpb.sr.dac.demo.dto.GetUsuariosRespDTO;
 import br.edu.ifpb.sr.dac.demo.dto.PostUsuarioDTO;
+import br.edu.ifpb.sr.dac.demo.dto.UsuarioMapper;
 import br.edu.ifpb.sr.dac.demo.model.Usuario;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,28 +13,48 @@ import java.util.List;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private UsuarioDao usuarioDao;
+    private final UsuarioDao usuarioDao;
+    private final UsuarioMapper usuarioMapper;
+
+    public UsuarioServiceImpl(UsuarioDao usuarioDao, UsuarioMapper usuarioMapper) {
+        this.usuarioDao = usuarioDao;
+        this.usuarioMapper = usuarioMapper;
+    }
 
     @Override
+    @Transactional
     public void save(PostUsuarioDTO dto) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.nome());
-        usuario.setSenha(dto.senha());
-        usuario.setUsername(dto.username());
+        Usuario usuario = this.usuarioMapper.toUsuarioEntity(dto);
+        usuario.setTipo("USUARIO");
         this.usuarioDao.save(usuario);
     }
 
-    public List<Getusuario> listar() {
-        return this.usuarioDao.findAll().
-                stream()
-                .map(
-                        usuario -> new Getusuario(
-                         usuario.getNome(),
-                         usuario.getId(),
-                         usuario.getUsername() )
-                    ).toList();
 
+    @Transactional
+    public void saveAdmin(PostUsuarioDTO dto) {
+        Usuario usuario = this.usuarioMapper.toUsuarioEntity(dto);
+        usuario.setTipo("ADMIN");
+
+
+        usuarioDao.save(usuario);
+    }
+
+    @Override
+    public List<GetUsuariosRespDTO> listAll() {
+        return this.usuarioDao.findAll().stream().map(usuario -> new GetUsuariosRespDTO(usuario.getId(), usuario.getNome(), usuario.getUsername(), usuario.getTipo())).toList();
+    }
+
+    @Override
+    public List<GetUsuariosRespDTO> listAllAdmin() {
+        return this.usuarioDao
+                .findAllByTipo("ADMIN")
+                .stream()
+                .map(adm -> new GetUsuariosRespDTO(
+                        adm.getId(),
+                        adm.getNome(),
+                        adm.getUsername(),
+                        adm.getTipo()
+                )).toList();
     }
 
 }
