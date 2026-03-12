@@ -3,10 +3,12 @@ package br.edu.ifpb.sr.dac.demo.controller;
 import br.edu.ifpb.sr.dac.demo.dto.GetUsuariosRespDTO;
 import br.edu.ifpb.sr.dac.demo.dto.PostUsuarioDTO;
 import br.edu.ifpb.sr.dac.demo.service.UsuarioService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/adm")
@@ -19,7 +21,7 @@ public class AdmController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> postAdm(@RequestBody PostUsuarioDTO dto) {
+    public ResponseEntity<Boolean> postAdm( @Valid @RequestBody PostUsuarioDTO dto) {
 
         this.usuarioService.saveAdmin(dto);
         return ResponseEntity.ok(Boolean.TRUE);
@@ -27,8 +29,8 @@ public class AdmController {
 
 
     @GetMapping
-    public ResponseEntity<List<GetUsuariosRespDTO>> getAdms() {
-        return ResponseEntity.ok(this.usuarioService.listAllAdmin());
+    public ResponseEntity<Page<GetUsuariosRespDTO>> getAdms(@PageableDefault(size = 10) Pageable page) {
+        return ResponseEntity.ok(this.usuarioService.listAllAdmin(page));
     }
 
 }

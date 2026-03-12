@@ -3,6 +3,10 @@ package br.edu.ifpb.sr.dac.demo.controller;
 import br.edu.ifpb.sr.dac.demo.dto.GetUsuariosRespDTO;
 import br.edu.ifpb.sr.dac.demo.dto.PostUsuarioDTO;
 import br.edu.ifpb.sr.dac.demo.service.UsuarioService;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +24,8 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> postUsuario(@RequestBody PostUsuarioDTO dto) {
+    public ResponseEntity<Boolean> postUsuario(@Valid @RequestBody PostUsuarioDTO dto) {
+
         this.usuarioService.save(dto);
         return ResponseEntity.created(URI.create("/1")).body(Boolean.TRUE);
     }
